@@ -1,47 +1,97 @@
 <h3 class="bg-primary text-center text-white p-2">
-  {{ username }}'s To Do List
-  <h6 class="mt-1">{{ itemCount }} {{ showComplete ? "" : "Incomplete" }} Items</h6>
+  Запись на ремонт автомобиля
 </h3>
 
-<div class="container-fluid">
+
+<form [formGroup]="fmGroup" class="container-fluid" (ngSubmit)="onSubmit()">
+  <!--<div *ngIf="avtoNumber.invalid"> Name is too short. </div>-->
+
+  <div class="mb-3 row">
+    <label for="avtoNumber_id" class="col-sm-2 col-form-label">Гос.Номер:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="avtoNumber_id" formControlName="avtoNumber">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="clientPhone_id" class="col-sm-2 col-form-label">Номер телефона:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="clientPhone_id" formControlName="clientPhone">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="clientName_id" class="col-sm-2 col-form-label">Имя:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="clientName_id" formControlName="clientName">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="serviceStaion_id" class="col-sm-2 col-form-label">СТО:</label>
+    <div class="col-sm-10">
+      <select class="form-control" id="serviceStaion_id" formControlName="serviceStation">
+        <option *ngFor="let item of ServiceStationItems | async" [value]="item.id">{{ item.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="avtoMake_id" class="col-sm-2 col-form-label">Марка автомобиля:</label>
+    <div class="col-sm-10">
+      <select class="form-control" id="avtoMake_id" formControlName="avtoMake" (change)="AvtoModelItems_Fill()">
+        <option *ngFor="let item of AvtoMakeItems | async" [value]="item.id">{{ item.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="avtoModel_id" class="col-sm-2 col-form-label">Moдель автомобиля:</label>
+    <div class="col-sm-10">
+      <select class="form-control" id="avtoModel_id" formControlName="avtoModel">
+        <option *ngFor="let item of AvtoModelItems | async" [value]="item.id">{{ item.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="avtoWorks_id" class="col-sm-2 col-form-label">Необходимые работы:</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" id="avtoWorks_id" rows="3" formControlName="avtoWorks"> </textarea>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-sm-2 col-form-label"></div>
+    <div class="col-sm-10">
+
+      <label class="form-check-label" for="agreeOnTheCost_id">
+        <input class="form-check-input" type="checkbox" id="agreeOnTheCost_id" formControlName="agreeOnTheCost" />
+        Предварительно согласовать стоимость
+      </label>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="bookedDate_id" class="col-sm-2 col-form-label">Дата:</label>
+    <div class="col-sm-10">
+      <input id="bookedDate_id" class="form-control" bsDatepicker [minDate]="minDate" [maxDate]="maxDate" formControlName="bookedDate" />
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="bookedTime_id" class="col-sm-2 col-form-label">Время:</label>
+    <div class="col-sm-10">
+      <timepicker id="bookedTime_id" [hourStep]="1" [minuteStep]="30" [showSeconds]="false" [showMeridian]="false" formControlName="bookedTime"></timepicker>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col">
-      <input name="dp" class="form-control" placeholder="Enter task here" #todoText bsDatepicker [minDate]="minDate" [maxDate]="maxDate" />
-      <timepicker name="tp" [hourStep]="1" [minuteStep]="30" [showSeconds]="false" [showMeridian]="false" [(ngModel)]="mytime"></timepicker>
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-primary" (click)="addItem(todoText.value)">
-        Add
+      <button class="btn btn-primary" type="submit">
+        Сохранить
       </button>
     </div>
   </div>
-</div>
 
-
-<div class="m-2">
-  <table class="table table-striped table-bordered table-sm">
-    <thead>
-      <tr><th>#</th><th>Description</th><th>Done</th></tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of items; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ item.task }}</td>
-        <td><input type="checkbox" [(ngModel)]="item.complete" /></td>
-        <!-- <td [ngSwitch]="item.complete">
-            <span *ngSwitchCase="true">Yes</span>
-            <span *ngSwitchDefault>No</span>
-        </td> -->
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="bg-secondary text-white text-center p-2">
-  <div class="form-check">
-    <input class="form-check-input" type="checkbox" [(ngModel)]="showComplete" />
-    <label class="form-check-label" for="defaultCheck1">
-      Show Completed Tasks
-    </label>
-  </div>
-</div>
+</form>

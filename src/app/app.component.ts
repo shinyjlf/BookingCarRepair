@@ -1,24 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NgForm, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-//import { BsLocaleService } from 'ngx-bootstrap/timepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ruLocale } from 'ngx-bootstrap/chronos';
 
-import { TodoList } from "./todoList";
-import { TodoItem } from "./todoItem";
+import { ListItem } from "./listItem";
+import { DataService } from "./data.service";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   minDate: Date;
   maxDate: Date;
-  mytime: Date;
+  //mytime: Date;
+  fmGroup: any;
+  ServiceStationItems: Observable<ListItem[]>;
+  AvtoMakeItems: Observable<ListItem[]>;
+  AvtoModelItems: Observable<ListItem[]>;
 
-  constructor(private localeService: BsLocaleService) {
+
+
+  constructor(private formbuilder: FormBuilder, private DataService: DataService, private localeService: BsLocaleService) {
     defineLocale('ru', ruLocale);
     this.localeService.use('ru');
     this.minDate = new Date();
@@ -27,33 +35,45 @@ export class AppComponent {
     this.maxDate.setDate(this.minDate.getDate() + 31);
 
     //this.mytime = new Date();
-    //this.mytime.setHours(6, 55);
+    //this.mytime.setHours(0, 0);
+    
   }
 
-
-  private list = new TodoList("Bob", [
-    new TodoItem("Go for run", true),
-    new TodoItem("Get flowers"),
-    new TodoItem("Collect tickets"),
-  ]);
-
-  get username(): string {
-    return this.list.user;
+  AvtoModelItems_Fill() {
+    this.AvtoModelItems = this.DataService.sendRequest_GetModels(this.fmGroup.get('avtoMake').value);
   }
 
-  get itemCount(): number {
-    return this.items.length;
+  ngOnInit() {
+
+    this.fmGroup = this.formbuilder.group({
+      avtoNumber: ['', Validators.required],
+      clientPhone: ['', Validators.required],
+      clientName: ['', Validators.required],
+      serviceStation: ['', Validators.required],
+      avtoMake: ['', Validators.required],
+      avtoModel: ['', Validators.required],
+      avtoWorks: ['', Validators.required],
+      agreeOnTheCost: [true, Validators.required],
+      bookedDate: ['', Validators.required],
+      bookedTime: ['', ]
+    }); //this.fmGroup.setValue({avtoNumber: 'Carson', clientPhone: 'Drew'});
+
+    this.DataService.sendRequest_Login().subscribe(res => {
+      console.log("login");
+      this.ServiceStationItems = this.DataService.sendRequest_GetServiceStations();
+      this.AvtoMakeItems = this.DataService.sendRequest_GetMarks();
+    });
+    
   }
 
-  get items(): readonly TodoItem[] {
-    return this.list.items.filter(item => this.showComplete || !item.complete);
+  onSubmit(): void {
+    this.DataService.sendRequest_SaveBooking(this.fmGroup).subscribe(res => {
+      console.log("saved:");
+      console.log(res);
+
+    });
+      
   }
 
-  addItem(newItem) {
-    if (newItem != "") {
-        this.list.addItem(newItem);
-    }
-  }
-
-  showComplete: boolean = false;
+  
 }
