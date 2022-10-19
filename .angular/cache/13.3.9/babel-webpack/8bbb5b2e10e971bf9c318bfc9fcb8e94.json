@@ -1,1 +1,0 @@
-{"ast":null,"code":"export class TodoItem {\n  constructor(taskVal, completeVal = false) {\n    this.task = taskVal;\n    this.complete = completeVal;\n  }\n\n}","map":null,"metadata":{},"sourceType":"module"}

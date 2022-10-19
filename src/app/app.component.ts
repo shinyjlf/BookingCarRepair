@@ -16,7 +16,7 @@ export class AppComponent {
 
   minDate: Date;
   maxDate: Date;
-  mytime: Date = new Date();
+  mytime: Date;
 
   constructor(private localeService: BsLocaleService) {
     defineLocale('ru', ruLocale);
@@ -24,17 +24,19 @@ export class AppComponent {
     this.minDate = new Date();
     this.maxDate = new Date();
     this.minDate.setDate(this.minDate.getDate());
-    this.maxDate.setDate(this.minDate.getDate() + 31);   
-}
+    this.maxDate.setDate(this.minDate.getDate() + 31);
 
-  
+    //this.mytime = new Date();
+    //this.mytime.setHours(6, 55);
+  }
+
 
   private list = new TodoList("Bob", [
     new TodoItem("Go for run", true),
     new TodoItem("Get flowers"),
     new TodoItem("Collect tickets"),
-  ]);  
-  
+  ]);
+
   get username(): string {
     return this.list.user;
   }
@@ -49,11 +51,9 @@ export class AppComponent {
 
   addItem(newItem) {
     if (newItem != "") {
-      this.list.addItem(newItem);
-      
+        this.list.addItem(newItem);
     }
   }
 
   showComplete: boolean = false;
-
 }
