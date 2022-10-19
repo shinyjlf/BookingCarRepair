@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+//import { BsLocaleService } from 'ngx-bootstrap/timepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { ruLocale } from 'ngx-bootstrap/chronos';
+
 import { TodoList } from "./todoList";
 import { TodoItem } from "./todoItem";
 
@@ -8,6 +13,22 @@ import { TodoItem } from "./todoItem";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  minDate: Date;
+  maxDate: Date;
+  mytime: Date = new Date();
+
+  constructor(private localeService: BsLocaleService) {
+    defineLocale('ru', ruLocale);
+    this.localeService.use('ru');
+    this.minDate = new Date();
+    this.maxDate = new Date();
+    this.minDate.setDate(this.minDate.getDate());
+    this.maxDate.setDate(this.minDate.getDate() + 31);   
+}
+
+  
+
   private list = new TodoList("Bob", [
     new TodoItem("Go for run", true),
     new TodoItem("Get flowers"),
@@ -28,9 +49,11 @@ export class AppComponent {
 
   addItem(newItem) {
     if (newItem != "") {
-        this.list.addItem(newItem);
+      this.list.addItem(newItem);
+      
     }
   }
 
   showComplete: boolean = false;
+
 }

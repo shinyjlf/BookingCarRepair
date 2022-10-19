@@ -6,9 +6,13 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col">
-      <input class="form-control" placeholder="Enter task here" #todoText />    
+      <input class="form-control" placeholder="Enter task here" #todoText bsDatepicker [minDate]="minDate" [maxDate]="maxDate" />
+
+      <timepicker [(ngModel)]="mytime" [hourStep]="1" [minuteStep]="30" [showSeconds]="false"></timepicker>
     </div>
+
     <div class="col-auto">
+      
       <button class="btn btn-primary" (click)="addItem(todoText.value)">
         Add
       </button>
@@ -29,7 +33,10 @@
             <!-- <td [ngSwitch]="item.complete"> 
                 <span *ngSwitchCase="true">Yes</span>
                 <span *ngSwitchDefault>No</span>
-            </td> -->
+            </td>
+
+
+              -->
         </tr>           
     </tbody>
   </table>
