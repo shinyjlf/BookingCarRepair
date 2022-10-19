@@ -12,8 +12,8 @@ export class AppComponent {
     new TodoItem("Go for run", true),
     new TodoItem("Get flowers"),
     new TodoItem("Collect tickets"),
-  ]);
-
+  ]);  
+  
   get username(): string {
     return this.list.user;
   }
