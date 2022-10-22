@@ -86,6 +86,7 @@ export class DataService {
         console.log("status: " + res["status"]);
         console.log(res["result"]["Response"]);
         let results = res["result"]["Response"]["Marks"]["data"].map(item => {
+          //this.avtoModel_disabled = false;
           return new ListItem(item.MARK_ID, item.MARK_NAME_RUS);
         });
         return results;

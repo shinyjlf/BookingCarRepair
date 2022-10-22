@@ -1,109 +1,160 @@
+<button type="button" class="btn btn-primary" (click)="openModal(template)">Запись в автосервис</button>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Запись в автосервис</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+
+
+
+
+
+
+
+
+    <form [formGroup]="fmGroup" class="container-fluid" (ngSubmit)="onSubmit()">
+      <!--<div *ngIf="avtoNumber.invalid"> Name is too short. </div>-->
+
+      <div class="mb-3 row">
+        <label for="avtoNumber_id" class="col-sm-2 col-form-label">Гос.Номер:</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" [class.is-invalid]="avtoNumber_class" id="avtoNumber_id" formControlName="avtoNumber" (focusout)="CarData_Fill()">
+          <!--{avtoNumber.invalid ? 'is-invalid' : 'is-valid' }<div *ngIf="avtoNumber.invalid && (avtoNumber.dirty || avtoNumber.touched)"
+             class="alert alert-danger">
+            Name is required.
+        </div>-->
+
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="clientPhone_id" class="col-sm-2 col-form-label">Номер телефона:</label>
+        <div class="input-group col-sm-10">
+          <div class="input-group-prepend">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">+7</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">+7</a>
+              <a class="dropdown-item" href="#">+8</a>
+            </div>
+          </div>
+          <input type="text" class="form-control" [class.is-invalid]="clientPhone_class" (focusout)="setValidity('clientPhone')" id="clientPhone_id" formControlName="clientPhone" />
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="clientName_id" class="col-sm-2 col-form-label">Имя:</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" [class.is-invalid]="clientName_class" (focusout)="setValidity('clientName')" id="clientName_id" formControlName="clientName" />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="serviceStaion_id" class="col-sm-2 col-form-label">СТО:</label>
+        <div class="col-sm-10">
+          <select class="form-control" [class.is-invalid]="serviceStation_class" (focusout)="setValidity('serviceStation')" id="serviceStaion_id" formControlName="serviceStation">
+            <option *ngFor="let item of ServiceStationItems | async" [value]="item.id">{{ item.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="avtoMake_id" class="col-sm-2 col-form-label">Марка автомобиля:</label>
+        <div class="col-sm-10">
+          <select class="form-control" [class.is-invalid]="avtoMake_class" (focusout)="setValidity('avtoMake')" id="avtoMake_id" formControlName="avtoMake" (change)="AvtoModelItems_Fill(avtoMake.value)">
+            <option *ngFor="let item of AvtoMakeItems | async" [value]="item.id">{{ item.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="avtoModel_id" class="col-sm-2 col-form-label">Moдель автомобиля:</label>
+        <div class="col-sm-10">
+          <select class="form-control" [class.is-invalid]="avtoModel_class" (focusout)="setValidity('avtoModel')" id="avtoModel_id" formControlName="avtoModel">
+            <option *ngFor="let item of AvtoModelItems | async" [value]="item.id">{{ item.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="avtoVIN_id" class="col-sm-2 col-form-label">VIN номер автомобиля:</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="avtoVIN_id" formControlName="avtoVIN" />
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="avtoWorks_id" class="col-sm-2 col-form-label">Необходимые работы:</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" [class.is-invalid]="avtoWorks_class" (focusout)="setValidity('avtoWorks')" id="avtoWorks_id" rows="3" formControlName="avtoWorks"> </textarea>
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <div class="col-sm-2 col-form-label"></div>
+        <div class="col-sm-10">
+
+          <label class="form-check-label" for="agreeOnTheCost_id">
+            <input class="form-check-input" type="checkbox" id="agreeOnTheCost_id" formControlName="agreeOnTheCost" />
+            Предварительно согласовать стоимость
+          </label>
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="bookedDate_id" class="col-sm-2 col-form-label">Дата:</label>
+        <div class="col-sm-10">
+          <input id="bookedDate_id" class="form-control" [class.is-invalid]="bookedDate_class" (focusout)="setValidity('bookedDate')" bsDatepicker [minDate]="minDate" [maxDate]="maxDate" formControlName="bookedDate" />
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="bookedTime_id" class="col-sm-2 col-form-label">Время:</label>
+        <div class="col-sm-10">
+          <timepicker id="bookedTime_id" [hourStep]="1" [minuteStep]="15" [showSeconds]="false" [showMeridian]="false" formControlName="bookedTime"></timepicker>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <button class="btn btn-primary" type="submit">
+            Сохранить
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</ng-template>
+
+
 <h3 class="bg-primary text-center text-white p-2">
   Запись на ремонт автомобиля
 </h3>
 
-
-<form [formGroup]="fmGroup" class="container-fluid" (ngSubmit)="onSubmit()">
-  <!--<div *ngIf="avtoNumber.invalid"> Name is too short. </div>-->
-
-  <div class="mb-3 row">
-    <label for="avtoNumber_id" class="col-sm-2 col-form-label">Гос.Номер:</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" [class.is-invalid]="avtoNumber_class" id="avtoNumber_id" formControlName="avtoNumber" (focusout)="CarData_Fill()" >
-      <!--{avtoNumber.invalid ? 'is-invalid' : 'is-valid' }<div *ngIf="avtoNumber.invalid && (avtoNumber.dirty || avtoNumber.touched)"
-       class="alert alert-danger">
-      Name is required.
-  </div>-->
-
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <label for="clientPhone_id" class="col-sm-2 col-form-label">Номер телефона:</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" [class.is-invalid]="clientPhone_class"  (focusout)="setValidity('clientPhone')" id="clientPhone_id" formControlName="clientPhone" />
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <label for="clientName_id" class="col-sm-2 col-form-label">Имя:</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" [class.is-invalid]="clientName_class"  (focusout)="setValidity('clientName')" id="clientName_id" formControlName="clientName"/>
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="serviceStaion_id" class="col-sm-2 col-form-label">СТО:</label>
-    <div class="col-sm-10">
-      <select class="form-control" [class.is-invalid]="serviceStation_class"  (focusout)="setValidity('serviceStation')" id="serviceStaion_id" formControlName="serviceStation">
-        <option *ngFor="let item of ServiceStationItems | async" [value]="item.id">{{ item.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="avtoMake_id" class="col-sm-2 col-form-label">Марка автомобиля:</label>
-    <div class="col-sm-10">
-      <select class="form-control" [class.is-invalid]="avtoMake_class"  (focusout)="setValidity('avtoMake')" id="avtoMake_id" formControlName="avtoMake" (change)="AvtoModelItems_Fill(avtoMake.value)">
-        <option *ngFor="let item of AvtoMakeItems | async" [value]="item.id">{{ item.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="avtoModel_id" class="col-sm-2 col-form-label">Moдель автомобиля:</label>
-    <div class="col-sm-10">
-      <select class="form-control" [class.is-invalid]="avtoModel_class"  (focusout)="setValidity('avtoModel')" id="avtoModel_id" formControlName="avtoModel">
-        <option *ngFor="let item of AvtoModelItems | async" [value]="item.id">{{ item.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="mb-3 row" >
-    <label for="avtoVIN_id" class="col-sm-2 col-form-label">VIN номер автомобиля:</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control" id="avtoVIN_id" formControlName="avtoVIN"/>
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <label for="avtoWorks_id" class="col-sm-2 col-form-label">Необходимые работы:</label>
-    <div class="col-sm-10">
-      <textarea class="form-control" [class.is-invalid]="avtoWorks_class"  (focusout)="setValidity('avtoWorks')" id="avtoWorks_id" rows="3" formControlName="avtoWorks" > </textarea>
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <div class="col-sm-2 col-form-label"></div>
-    <div class="col-sm-10">
-
-      <label class="form-check-label" for="agreeOnTheCost_id">
-        <input class="form-check-input" type="checkbox" id="agreeOnTheCost_id" formControlName="agreeOnTheCost" />
-        Предварительно согласовать стоимость
-      </label>
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <label for="bookedDate_id" class="col-sm-2 col-form-label">Дата:</label>
-    <div class="col-sm-10">
-      <input id="bookedDate_id" class="form-control"  [class.is-invalid]="bookedDate_class"  (focusout)="setValidity('bookedDate')" bsDatepicker [minDate]="minDate" [maxDate]="maxDate" formControlName="bookedDate"  />
-    </div>
-  </div>
-
-  <div class="mb-3 row">
-    <label for="bookedTime_id" class="col-sm-2 col-form-label">Время:</label>
-    <div class="col-sm-10">
-      <timepicker id="bookedTime_id" [hourStep]="1" [minuteStep]="15" [showSeconds]="false" [showMeridian]="false" formControlName="bookedTime" ></timepicker>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <button class="btn btn-primary" type="submit">
-        Сохранить
-      </button>
-    </div>
-  </div>
-
-</form>

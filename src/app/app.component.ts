@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NgForm, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ruLocale } from 'ngx-bootstrap/chronos';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ListItem } from "./listItem";
 import { DataService } from "./data.service";
@@ -17,6 +18,7 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
+  modalRef?: BsModalRef;
   minDate: Date;
   maxDate: Date;  //bookedDateTime: Date | undefined = new Date();  
   fmGroup: FormGroup; 
@@ -25,7 +27,7 @@ export class AppComponent implements OnInit {
   AvtoModelItems: Observable<ListItem[]>;
 
 
-  constructor(private formbuilder: FormBuilder, private DataService: DataService, private localeService: BsLocaleService) {
+  constructor(private formbuilder: FormBuilder, private DataService: DataService, private localeService: BsLocaleService, private modalService: BsModalService) {
     defineLocale('ru', ruLocale);
     this.localeService.use('ru');
     this.minDate = new Date();
@@ -34,6 +36,10 @@ export class AppComponent implements OnInit {
     this.maxDate.setDate(this.minDate.getDate() + 31);
     //this.mytime = new Date();
     //this.mytime.setHours(0, 0);    
+  }
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
   }
 
   AvtoModelItems_Fill(avtoMakeID: string) {
@@ -177,7 +183,7 @@ export class AppComponent implements OnInit {
   avtoModel_class: boolean = false;
   avtoWorks_class: boolean = false;
   bookedDate_class: boolean = false;
-
+  avtoModel_disabled: boolean = true;
 
   setValidity(name: any, checkAll: boolean = false) {
     console.log(name + ' = ' + this.fmGroup.get(name).invalid);
@@ -191,7 +197,7 @@ export class AppComponent implements OnInit {
         case 'avtoWorks': this.avtoWorks_class = this.fmGroup.get('avtoWorks').invalid; if (!checkAll) break;
         case 'bookedDate': this.bookedDate_class = this.fmGroup.get('bookedDate').invalid; if (!checkAll) break;
 
-      }
+    }
      
   }
 
