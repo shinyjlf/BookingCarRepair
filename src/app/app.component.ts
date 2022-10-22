@@ -18,9 +18,8 @@ import { map } from 'rxjs/operators';
 export class AppComponent implements OnInit {
 
   minDate: Date;
-  maxDate: Date;
-  //bookedDateTime: Date | undefined = new Date();
-  fmGroup: FormGroup; avtoNumber_class: boolean = false; IsInvalidClass: boolean[];
+  maxDate: Date;  //bookedDateTime: Date | undefined = new Date();  
+  fmGroup: FormGroup; 
   ServiceStationItems: Observable<ListItem[]>;
   AvtoMakeItems: Observable<ListItem[]>;
   AvtoModelItems: Observable<ListItem[]>;
@@ -44,8 +43,7 @@ export class AppComponent implements OnInit {
   CarData_Fill() {
 
     if (this.fmGroup.get('avtoNumber').valid) {
-      this.avtoNumber_class = false;
-      //this.DataService.sendRequest_Login().subscribe(res => {
+      //this.DataService.sendRequest_Login().subscribe(loginRes => {
       this.DataService.sendRequest_GetCarData(this.fmGroup.get('avtoNumber').value).subscribe(res => {
         console.log(res["result"]["Response"]);
         let i = 0; let _customerID = ""; let _avtoModelID = ""; let _avtoVIN = ""; let _customerPhone = ""; let _customerName = ""; let _avtoMakeID = "";
@@ -129,28 +127,12 @@ export class AppComponent implements OnInit {
       });
       //});
     }
-    else {
-      this.avtoNumber_class = true;
-    }
+    this.setValidity('avtoNumber');
   }
-
- 
-
+  
   ngOnInit() {
 
-    this.fmGroup = this.formbuilder.group({
-      avtoNumber: ['', [Validators.required, Validators.pattern(/^\D\d{3}\D{2}\d{2,3}$/)]], //В455КВ197
-      clientPhone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      clientName: ['', Validators.required],
-      serviceStation: ['', Validators.required],
-      avtoMake: ['', Validators.required],
-      avtoModel: ['', Validators.required],
-      avtoVIN: [''],
-      avtoWorks: ['', Validators.required],
-      agreeOnTheCost: [true, Validators.required],
-      bookedDate: ['', Validators.required],
-      bookedTime: ['', ]
-    });
+    this.fmGroup_init();
     
     this.DataService.sendRequest_Login().subscribe(res => {
       console.log("login");
@@ -161,17 +143,56 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit(): void {
-   // if (this.fmGroup.valid) {
-      this.DataService.sendRequest_SaveBooking(this.fmGroup).subscribe(res => {
-        console.log("saved:");
-        console.log(res);
-      });
-
-   // }
+    if (this.fmGroup.valid) {
+      this.DataService.sendRequest_SaveBooking(this.fmGroup);
+      this.fmGroup_init();
+    }
+    else {
+      this.setValidity('avtoNumber', true); //validate all fields, starting from 'avtoNumber'
+    }
   }
 
-  setValidity(name: string) {
-    this.IsInvalidClass[name] = this.fmGroup.get(name).valid;    
+  fmGroup_init() {
+    this.fmGroup = this.formbuilder.group({
+      avtoNumber: ['', [Validators.required, Validators.pattern(/^\D\d{3}\D{2}\d{2,3}$/)]], //В455КВ197
+      clientPhone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      clientName: ['', [Validators.required]],
+      serviceStation: ['', Validators.required],
+      avtoMake: ['', Validators.required],
+      avtoModel: ['', Validators.required],
+      avtoVIN: [''],
+      avtoWorks: ['', Validators.required],
+      agreeOnTheCost: [true, Validators.required],
+      bookedDate: ['', Validators.required],
+      bookedTime: ['',]
+    });
+  }
+
+
+  avtoNumber_class: boolean = false; 
+  clientPhone_class: boolean = false;
+  clientName_class: boolean = false;
+  serviceStation_class: boolean = false;
+  avtoMake_class: boolean = false;
+  avtoModel_class: boolean = false;
+  avtoWorks_class: boolean = false;
+  bookedDate_class: boolean = false;
+
+
+  setValidity(name: any, checkAll: boolean = false) {
+    console.log(name + ' = ' + this.fmGroup.get(name).invalid);
+    switch (name) {
+        case 'avtoNumber': this.avtoNumber_class = this.fmGroup.get('avtoNumber').invalid; if (!checkAll) break;
+        case 'clientPhone': this.clientPhone_class = this.fmGroup.get('clientPhone').invalid; if (!checkAll) break;
+        case 'clientName': this.clientName_class = this.fmGroup.get('clientName').invalid; if (!checkAll) break;
+        case 'serviceStation': this.serviceStation_class = this.fmGroup.get('serviceStation').invalid; if (!checkAll) break;
+        case 'avtoMake': this.avtoMake_class = this.fmGroup.get('avtoMake').invalid; if (!checkAll) break;
+        case 'avtoModel': this.avtoModel_class = this.fmGroup.get('avtoModel').invalid; if (!checkAll) break;
+        case 'avtoWorks': this.avtoWorks_class = this.fmGroup.get('avtoWorks').invalid; if (!checkAll) break;
+        case 'bookedDate': this.bookedDate_class = this.fmGroup.get('bookedDate').invalid; if (!checkAll) break;
+
+      }
+     
   }
 
   get avtoNumber() {
@@ -180,6 +201,9 @@ export class AppComponent implements OnInit {
   get avtoMake() {
     return this.fmGroup.get('avtoMake');
   }
+  //get clientPhone() :string{
+  //  return 'clientPhone';
+  //}
 
 
   
