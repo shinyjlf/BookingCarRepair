@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppComponent
   ],
   imports: [
-    BrowserModule, FormsModule, BrowserAnimationsModule, ReactiveFormsModule, BsDatepickerModule.forRoot(), TimepickerModule.forRoot()
+    BrowserModule, FormsModule, BrowserAnimationsModule, ReactiveFormsModule, BsDatepickerModule.forRoot(), TimepickerModule.forRoot(), , HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
