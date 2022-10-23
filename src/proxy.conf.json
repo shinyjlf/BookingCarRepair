@@ -1,0 +1,9 @@
+{
+  "/api": {
+    "target": "https://turboservice.ru/skrytye-stati/ZNR",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+
+  }
+}
