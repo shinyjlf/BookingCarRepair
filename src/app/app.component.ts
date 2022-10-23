@@ -1,11 +1,10 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ruLocale } from 'ngx-bootstrap/chronos';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ListItem } from "./listItem";
 import { DataService } from "./data.service";
@@ -18,7 +17,6 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
-  modalRef?: BsModalRef;
   minDate: Date;
   maxDate: Date;  //bookedDateTime: Date | undefined = new Date();  
   fmGroup: FormGroup; 
@@ -27,7 +25,7 @@ export class AppComponent implements OnInit {
   AvtoModelItems: Observable<ListItem[]>;
 
 
-  constructor(private formbuilder: FormBuilder, private DataService: DataService, private localeService: BsLocaleService, private modalService: BsModalService) {
+  constructor(private formbuilder: FormBuilder, private DataService: DataService, private localeService: BsLocaleService) {
     defineLocale('ru', ruLocale);
     this.localeService.use('ru');
     this.minDate = new Date();
@@ -38,11 +36,7 @@ export class AppComponent implements OnInit {
     //this.mytime.setHours(0, 0);    
   }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
-  }
-
-  AvtoModelItems_Fill(avtoMakeID: string) {
+   AvtoModelItems_Fill(avtoMakeID: string) {
     this.AvtoModelItems = this.DataService.sendRequest_GetModels(avtoMakeID);
   }
 

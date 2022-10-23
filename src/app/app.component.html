@@ -1,21 +1,3 @@
-<button type="button" class="btn btn-primary" (click)="openModal(template)">Запись в автосервис</button>
-
-<ng-template #template>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Запись в автосервис</h4>
-    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-
-
-
-
-
-
-
-
 
     <form [formGroup]="fmGroup" class="container-fluid" (ngSubmit)="onSubmit()">
       <!--<div *ngIf="avtoNumber.invalid"> Name is too short. </div>-->
@@ -147,9 +129,4 @@
 
 
 
-
-
-
-  </div>
-</ng-template>
 
