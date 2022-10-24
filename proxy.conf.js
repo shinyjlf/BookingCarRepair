@@ -19,8 +19,8 @@ const PROXY_CONFIG_0 = {
         console.log(bodyString);
 
 
-        //const domain = "https:\/\/booking-car-repair.vercel.app"; 
-        const domain = "https:\/\/localhost:4200";
+        const domain = "https:\/\/booking-car-repair.vercel.app"; 
+        //const domain = "https:\/\/localhost:4200";
 
         let searchString = "<a class=\"btn popupTrigger\" data-popup=\"popup-contact\" href=\"#\">оставить заявку<\/a>"; //<a class="btn popupTrigger" data-popup="popup-contact" href="#">оставить заявку</a>
         let modalHtml1 = "<a class=\"btn popupTrigger\" id=\"myBtn750954\" href=\"#\">Запись в автосервис<\/a><div id=\"myModal750954\" class=\"popup active\" style=\"display:none\"><div class=\"modal750954-content\">" +
