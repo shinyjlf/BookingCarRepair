@@ -107,24 +107,36 @@ export class DataService {
   public sendRequest_SaveBooking(form: any): Observable<any>{
     console.log(form.value);
 
-    let date = new Date(form.get('bookedDate').value);
-    let time = new Date(form.get('bookedTime').value);
-    let start_datetime = new Date(date.toDateString() + ' ' + time.toTimeString());
-   
+    let start_datetime = new Date(form.get('bookedDate').value);
+    if (form.get('bookedTime').value) { 
+      let time = new Date(form.get('bookedTime').value);
+      start_datetime = new Date(start_datetime.toDateString() + ' ' + time.toTimeString());
+    }
+    var datestring = this.formatDateToString(start_datetime);
+
+    console.log("datestring = " + datestring);
+    let clientPhone = form.get('clientPhone').value;
+    if (clientPhone) clientPhone = "8" + clientPhone;
+
     let body = {
       LDEPARTMENT_ID: form.get('serviceStation').value,
-      CREATE_DATE: new Date(),
-      START: start_datetime,
-      CLIENT_NAME: 'Василий Иванович Чапаев', // form.get('clientName').value
-      CLIENT_PHONE: '+70001111111', //form.get('clientPhone').value
+      CREATE_DATE: this.formatDateToString(),
+      START: datestring,
+      CLIENT_NAME: form.get('clientName').value, // 'Василий Иванович Чапаев'
+      CLIENT_PHONE: clientPhone, //form.get('clientPhone').value'+70001111111'
       GOSREG: form.get('avtoNumber').value,
       VIN: form.get('avtoVIN').value,
       MODEL_ID: form.get('avtoModel').value,
       COMMENT: form.get('avtoWorks').value
     };
     console.log(body);
-    return of([]); //this.httpClient.post("https://" + this.REST_API_SERVER + "/api-v2/Core/RW/ScheduledCar?SESSIONID=" + this.SessionID, body).pipe(catchError(this.handleError));
+    return this.httpClient.post("https://" + this.REST_API_SERVER + "/api-v2/Core/RW/ScheduledCar?SESSIONID=" + this.SessionID, body).pipe(catchError(this.handleError)); //of([]); //
 
+  }
+
+  public formatDateToString(start_datetime: Date = new Date()) {
+
+    return start_datetime.getFullYear() + "-" + ("0" + (start_datetime.getMonth() + 1)).slice(-2) + "-" + ("0" + start_datetime.getDate()).slice(-2) + " " + ("0" + start_datetime.getHours()).slice(-2) + ":" + ("0" + start_datetime.getMinutes()).slice(-2) + ":" + ("0" + start_datetime.getSeconds()).slice(-2);
   }
   //public sendRequest_CheckSaving(serviceStationId: string, date: Date): Observable<ListItem[]> {
   //  return this.httpClient.get("https://" + this.REST_API_SERVER + "/api-v2/Core/Directories/Models?FilterString=MARK_ID=?&FilterParam[0]=" + modelId + "&Fields[_]=MODEL_ID,MODEL_NAME&SESSIONID=" + this.SessionID)

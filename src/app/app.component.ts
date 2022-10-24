@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
 
   minDate: Date;
   maxDate: Date;  //bookedDateTime: Date | undefined = new Date();  
-  fmGroup: FormGroup; 
+  fmGroup: FormGroup;
+  formSubmitted: boolean; submitErrors: boolean;
   ServiceStationItems: Observable<ListItem[]>;
   AvtoMakeItems: Observable<ListItem[]>;
   AvtoModelItems: Observable<ListItem[]>;
@@ -63,7 +64,7 @@ export class AppComponent implements OnInit {
               let data = res1["result"]["Response"]["Customer"]["data"];
               _customerPhone = data["PHONE"] ?? '';
               _customerName = (data["FIRST_NAME"] ?? '') + ' ' + (data["SECOND_NAME"] ?? '') + ' ' + (data["LAST_NAME"] ?? '');
-              this.fmGroup.patchValue({ clientName: _customerName, clientPhone: _customerPhone });
+              this.fmGroup.patchValue({ clientName: _customerName, clientPhone: _customerPhone.substring(1) });
 
             });
           }
@@ -101,11 +102,11 @@ export class AppComponent implements OnInit {
 
             this.AvtoMakeItems.forEach(itm => {                          
               let ls_item = itm.find(a => a.name.toLowerCase().trim() == _avtoMake.toLowerCase().trim());
-              console.log(ls_item.id);
-              _avtoMakeID = ls_item.id;
-              this.fmGroup.patchValue({ avtoMake: _avtoMakeID });
+              console.log(ls_item?.id);
+              _avtoMakeID = ls_item?.id;
+              if(ls_item?.id) this.fmGroup.patchValue({ avtoMake: _avtoMakeID });
 
-              if (_avtoMakeID != "") {
+              if (_avtoMakeID) {
                 this.AvtoModelItems = this.DataService.sendRequest_GetModels(_avtoMakeID).pipe(map(res2 => {
                   _avtoModelID = res2.find(itm => (itm.name.toLowerCase().trim() == _avtoModel.toLowerCase().trim()))?.id;
                   console.log('model = ' + _avtoModelID);
@@ -133,7 +134,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
 
     this.fmGroup_init();
-    
+    this.formSubmitted = false;
     this.DataService.sendRequest_Login().subscribe(res => {
       console.log("login");
       this.ServiceStationItems = this.DataService.sendRequest_GetServiceStations();
@@ -144,12 +145,21 @@ export class AppComponent implements OnInit {
 
   onSubmit(): void {
     if (this.fmGroup.valid) {
-      this.DataService.sendRequest_SaveBooking(this.fmGroup);
+      this.DataService.sendRequest_SaveBooking(this.fmGroup).subscribe(res => {
+        if (res["result"]["Status"] == "-1") this.submitErrors = true;
+        console.log(res);
+      });
+      this.formSubmitted = true;
       this.fmGroup_init();
     }
     else {
       this.setValidity('avtoNumber', true); //validate all fields, starting from 'avtoNumber'
     }
+  }
+
+  closeButtonClick(): void {
+    this.formSubmitted = false;
+    this.submitErrors = false;
   }
 
   fmGroup_init() {
